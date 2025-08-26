@@ -1,0 +1,27 @@
+.flag-icon {
+  width: 24px; /* Adjust the width as needed */
+  height: auto;
+  margin-right: 8px; /* Adds some spacing between the flag and the text */
+  vertical-align: middle;
+}
+
+/* Optional: Additional styling to align content within the option */
+.mat-option-text {
+  display: flex;
+  align-items: center;
+}
+
+.canton-select {
+  width: 30ch;
+}
+
+.flag {
+  width: 60px; /* Adjust the width as needed */
+  height: auto;
+  margin-right: 8px; /* Adds some spacing between the flag and the text */
+}
+
+.canton-title {
+  display: flex;
+  align-items: center;
+}
