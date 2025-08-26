@@ -6,6 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { CantonService, Canton } from './canton-service';
 import { FormsModule } from '@angular/forms';
+import { BeerList } from "./beer-list/beer-list";
 
 @Component({
   selector: 'app-root',
@@ -15,7 +16,9 @@ import { FormsModule } from '@angular/forms';
     MatSelectModule,
     MatIconModule,
     MatInputModule,
-    FormsModule],
+    FormsModule,
+    BeerList
+],
   templateUrl: './app.html',
   styleUrl: './app.css',
   standalone: true

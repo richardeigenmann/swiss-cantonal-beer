@@ -1,0 +1,18 @@
+@if ( selectedCanton != null && selectedCanton != undefined ) {
+  <div class="beer-list-container">
+    <h2>Beers from this Canton:</h2>
+    @if (beers(); as beersList) {
+      @if (beersList.length > 0) {
+        <ul>
+          @for (beer of beersList; track beer.name) {
+            <li>{{ beer.name }} - {{ beer.brewery }}</li>
+          }
+        </ul>
+      } @else {
+        <p>No beers found for this canton.</p>
+      }
+    } @else {
+      <p>Please select a canton to view its beers.</p>
+    }
+  </div>
+}

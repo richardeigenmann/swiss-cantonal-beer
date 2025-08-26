@@ -202,6 +202,7 @@
     <div class="right-side">
       @if ( selectedCanton != null ) {
         <h1 class="canton-title"><img class="flag" src="{{ selectedCanton.flag }}" alt="{{selectedCanton.name}}"> {{ selectedCanton.name }}</h1>
+        <app-beer-list [selectedCanton]="selectedCanton"></app-beer-list>
       }
 
     </div>
