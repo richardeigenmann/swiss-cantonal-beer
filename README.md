@@ -5,7 +5,7 @@ a serious compendium of Swiss Beers.
 
 See the page live here:
 
-https://richardeigenmann.github.io/swiss-cantonal-beer/
+<https://richardeigenmann.github.io/swiss-cantonal-beer/>
 
 ## The interesting parts of the application
 
@@ -18,7 +18,7 @@ The background image that was created by Google Gemini is attached to the main `
 I created an array of canton objects with 2-char code, the name in German and a url
 to the canton flag which is on Wikipedia.
 
-This list is available in the `canton-service.ts` Angular Service. The CantonService is an 
+This list is available in the `canton-service.ts` Angular Service. The CantonService is an
 `@Injectable` so that it can be Dependency Injected into any components that needs it like the
 `app.ts` component.
 
@@ -35,7 +35,7 @@ Here the `beer-list.ts` components wants to work with this data.
 
 ### Selecting a canton
 
-Sind the plain HTML dropdown box can't be styled attractively and in particular doesn't 
+Sind the plain HTML dropdown box can't be styled attractively and in particular doesn't
 support cantonal flags in the selection I opted for the Angular-Material `mat-form-field`
 and 'mat-select' tools.
 
@@ -109,7 +109,7 @@ For more information on using the Angular CLI, including detailed command refere
 
 ```bash
 ng build --configuration production --base-href "https://richardeigenmann.github.io/swiss-cantonal-beer/"
-ngh
+ngh --dir dist/swiss-cantonal-beer/browser
 ```
 
 ## Acknowledgements
