@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["src/app/canton-service.spec.ts"],
-  "sourcesContent": ["import { TestBed } from '@angular/core/testing';\n\nimport { CantonService } from './canton-service';\n\ndescribe('CantonService', () => {\n  let service: CantonService;\n\n  beforeEach(() => {\n    TestBed.configureTestingModule({});\n    service = TestBed.inject(CantonService);\n  });\n\n  it('should be created', () => {\n    expect(service).toBeTruthy();\n  });\n});\n"],
-  "mappings": ";;;;;;;;;;;AAAA;AAEA;AAEA,SAAS,iBAAiB,MAAK;AAC7B,MAAI;AAEJ,aAAW,MAAK;AACd,YAAQ,uBAAuB,CAAA,CAAE;AACjC,cAAU,QAAQ,OAAO,aAAa;EACxC,CAAC;AAED,KAAG,qBAAqB,MAAK;AAC3B,WAAO,OAAO,EAAE,WAAU;EAC5B,CAAC;AACH,CAAC;",
-  "names": []
-}
