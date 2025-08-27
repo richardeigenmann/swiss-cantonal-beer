@@ -15,13 +15,7 @@
   width: 30ch;
 }
 
-.flag {
-  width: 60px; /* Adjust the width as needed */
-  height: auto;
-  margin-right: 8px; /* Adds some spacing between the flag and the text */
-}
 
-.canton-title {
-  display: flex;
-  align-items: center;
-}
+
+
+

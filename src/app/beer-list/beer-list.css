@@ -1,0 +1,16 @@
+.beer-list-container {
+  background-color:rgba(255, 255, 255, 0.7);
+  margin: 20px;
+  padding: 20px;
+}
+
+.canton-title {
+  display: flex;
+  align-items: top;
+}
+
+.flag {
+  width: 60px; /* Adjust the width as needed */
+  height: auto;
+  margin-right: 12px;
+}

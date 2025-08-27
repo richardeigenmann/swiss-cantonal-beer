@@ -1,14 +1,12 @@
 // src/app/canton-beer.service.ts
-import { Injectable, signal, Signal, computed } from '@angular/core';
+import { Injectable, signal, Signal } from '@angular/core';
 
 export interface Beer {
   name: string;
   brewery: string;
 }
 
-export interface CantonBeerMap {
-  [key: string]: Beer[];
-}
+export type CantonBeerMap = Record<string, Beer[]>;
 
 @Injectable({
   providedIn: 'root'
@@ -75,7 +73,7 @@ export class BeerService {
       { name: 'Seiler', brewery: 'Brauerei Seiler' }
     ],
     'VS': [
-      { name: 'Chopfab', brewery: 'Brauerei Doppelleu' }
+      { name: 'Valaisanne', brewery: 'Brasserie Valasienne, Sion' }
     ],
     'VD': [
       { name: 'Lausanne', brewery: 'Brasserie de Lausanne' }
@@ -85,7 +83,8 @@ export class BeerService {
     ],
     'ZH': [
       { name: 'Turbinenbräu', brewery: 'Turbinenbräu' },
-      { name: 'Haldengut', brewery: 'Brauerei Haldengut' }
+      { name: 'Haldengut', brewery: 'Brauerei Haldengut' },
+      { name: 'Chopfab', brewery: 'Chopfab Boxer AG, Winterthur' }
     ]
   });
 

@@ -1,6 +1,49 @@
 # SwissCantonalBeer
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.1.6.
+This is a little project to showcase Angular. It is not meant as
+a serious compendium of Swiss Beers.
+
+## The interesting parts of the application
+
+### Background image
+
+The background image that was created by Google Gemini is attached to the main `styles.css` file. Since it makes reading the `beer-list` component difficult, the `beer-list.css` has a semi opaque background color of `background-color: rgba(255, 255, 255, 0.7);`
+
+### The source of the cantons
+
+I created an array of canton objects with 2-char code, the name in German and a url
+to the canton flag which is on Wikipedia.
+
+This list is available in the `canton-service.ts` Angular Service. The CantonService is an 
+`@Injectable` so that it can be Dependency Injected into any components that needs it like the
+`app.ts` component.
+
+The list array is wrapped in an Angular Signal which is an ideomatic Angular way to
+handle change detection is the underlying data and keep all views refreshed.
+
+### The source of the beers
+
+I asked Gemini to pull togethe a list of cantons and the beers that are produced there.
+It did a reasonably good job.
+
+Again I wrapped the data into an Angular Signal which is available for Dependency Injection.
+Here the `beer-list.ts` components wants to work with this data.
+
+### Selecting a canton
+
+Sind the plain HTML dropdown box can't be styled attractively and in particular doesn't 
+support cantonal flags in the selection I opted for the Angular-Material `mat-form-field`
+and 'mat-select' tools.
+
+When the user makes a selection in the dropdown the
+`(selectionChange)="onSelectionChange($event.value)` function is called. Inside the `app.ts`
+code this updates the `selectedCanton` variable. Since this is bound to the `beer-list.ts`
+component the Angular Change Detection system is invoked which makes the beer-list component
+respond to the changed canton.
+
+### Beer
+
+Drinking Swiss Beers might be the most interesting thing here.
 
 ## Development server
 
@@ -57,3 +100,8 @@ Angular CLI does not come with an end-to-end testing framework by default. You c
 ## Additional Resources
 
 For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+
+## Acknowledgements
+
+I used Gemini to help me writing this app. It also created the Swiss Flag beer glass image.
+The canton flags are coming from Wikipedia.

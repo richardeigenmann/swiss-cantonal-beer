@@ -1,10 +1,19 @@
 import { TestBed } from '@angular/core/testing';
 import { App } from './app';
+import { CantonService } from './canton-service';
 
 describe('App', () => {
+  let mockCantonService: jasmine.SpyObj<CantonService>;
+
   beforeEach(async () => {
+    // Create a mock of the CantonService
+    mockCantonService = jasmine.createSpyObj('CantonService', ['getCantonByCode']);
+
     await TestBed.configureTestingModule({
       imports: [App],
+      providers: [
+        { provide: CantonService, useValue: mockCantonService } // Provide the mock service
+      ]
     }).compileComponents();
   });
 
@@ -14,10 +23,14 @@ describe('App', () => {
     expect(app).toBeTruthy();
   });
 
-  it('should render title', () => {
+  it('should call getCantonByCode on selection change', () => {
     const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
-    const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, swiss-cantonal-beer');
+    const app = fixture.componentInstance;
+    const cantonCode = 'ZH'; // A mock canton code
+
+    app.onSelectionChange(cantonCode);
+
+    expect(mockCantonService.getCantonByCode).toHaveBeenCalledWith(cantonCode);
   });
+
 });
