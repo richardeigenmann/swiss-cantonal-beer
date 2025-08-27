@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/styles.css"],
+  "sourcesContent": ["/* You can add global styles to this file, and also import other style files */\n\nhtml, body { height: 100%; }\nbody {\n  margin: 0;\n  padding: 0;\n  font-family: Roboto, \"Helvetica Neue\", sans-serif;\n  background-image: url('assets/SwissBeerBackground.png');\n  background-size: cover; /* Optional: ensures the image covers the entire background */\n  background-position: center; /* Optional: centers the image */\n  background-repeat: no-repeat; /* Optional: prevents the image from repeating */\n}\n"],
+  "mappings": ";AAEA;AAAM;AAAO,UAAQ;AAAM;AAC3B;AACE,UAAQ;AACR,WAAS;AACT;AAAA,IAAa,MAAM;AAAA,IAAE,gBAAgB;AAAA,IAAE;AACvC,oBAAkB;AAClB,mBAAiB;AACjB,uBAAqB;AACrB,qBAAmB;AACrB;",
+  "names": []
+}
