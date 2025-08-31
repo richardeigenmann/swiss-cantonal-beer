@@ -3,11 +3,18 @@
     <h1 class="canton-title"><img class="flag" src="{{ selectedCanton.flag }}" alt="{{selectedCanton.name}}"> Beers from {{ selectedCanton.name }}</h1>
     @if (beers(); as beersList) {
       @if (beersList.length > 0) {
-        <ul>
           @for (beer of beersList; track beer.name) {
-            <li>{{ beer.name }} - {{ beer.brewery }}</li>
+            <div class="beerItem">
+              <div class="imageContainer">
+                @if (beer.imageUrl !== null && beer.imageUrl !== undefined) {
+                  <img class="beerImage" [src]="beer.imageUrl" alt="{{ beer.name }}">
+                }
+              </div>
+              <div>
+                <h3>{{ beer.name }} - {{ beer.brewery }}</h3>
+              </div>
+            </div>
           }
-        </ul>
       } @else {
         <p>No beers found for this canton.</p>
       }

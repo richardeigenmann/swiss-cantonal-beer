@@ -14,3 +14,33 @@
   height: auto;
   margin-right: 12px;
 }
+
+/* The new Flexbox container for each list item */
+.beerItem {
+  display: flex;
+  align-items: center; /* Vertically centers the image and text */
+  background-color: #f9f9f9;
+  padding: 12px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  margin-bottom: 16px;
+}
+
+.imageContainer {
+  width: 40px;
+  height: 60px;
+  margin-right: 16px;
+  border: 1px solid #ccc; /* Optional: for visualization */
+  overflow: hidden; /* Hides any part of the image that goes over the container */
+  flex-shrink: 0; /* Prevents the container from shrinking */
+}
+
+.beerImage {
+  width: 100%; /* Make the image fill the container */
+  height: 100%; /* Make the image fill the container */
+  object-fit: contain; /* or 'cover' */
+}
+
+.beerText {
+  flex-grow: 1; /* Allows the text div to take up the remaining space */
+}

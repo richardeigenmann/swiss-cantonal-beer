@@ -7,6 +7,8 @@ See the page live here:
 
 <https://richardeigenmann.github.io/swiss-cantonal-beer/>
 
+While coding this app I discovered a much more comprehensive and serious website. Check it out here: <https://ilovebeer.ch/de>
+
 ## The interesting parts of the application
 
 ### Background image
@@ -115,4 +117,9 @@ ngh --dir dist/swiss-cantonal-beer/browser
 ## Acknowledgements
 
 I used Gemini to help me writing this app. It also created the Swiss Flag beer glass image.
+
 The canton flags are coming from Wikipedia.
+
+The images of the beers are linked to the original websites and were found with a quick google.
+An obvious to-do for this app is to invest in primary research and taste each beer and take
+a personal photo of each beer!
