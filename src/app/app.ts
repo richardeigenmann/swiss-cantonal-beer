@@ -7,6 +7,7 @@ import { MatInputModule } from '@angular/material/input';
 import { CantonService, Canton } from './canton-service';
 import { FormsModule } from '@angular/forms';
 import { BeerList } from "./beer-list/beer-list";
+import { CookieBanner } from './cookie-banner/cookie-banner';
 
 @Component({
   selector: 'app-root',
@@ -17,7 +18,8 @@ import { BeerList } from "./beer-list/beer-list";
     MatIconModule,
     MatInputModule,
     FormsModule,
-    BeerList
+    BeerList,
+    CookieBanner
 ],
   templateUrl: './app.html',
   styleUrl: './app.css',

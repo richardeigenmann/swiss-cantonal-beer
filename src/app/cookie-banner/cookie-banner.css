@@ -1,0 +1,32 @@
+/* src/app/cookie-banner/cookie-banner.component.css */
+.cookie-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  padding: 15px;
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.cookie-banner p {
+  margin: 0;
+  flex-grow: 1;
+}
+
+.cookie-banner button {
+  background-color: #fff;
+  color: #333;
+  border: none;
+  padding: 8px 15px;
+  cursor: pointer;
+  margin-left: 20px;
+  border-radius: 5px;
+}

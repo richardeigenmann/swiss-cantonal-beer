@@ -1,0 +1,14 @@
+@if (! cookieAccepted() ) {
+  <div class="cookie-banner">
+    <h1>Annoying Cookie Banner</h1>
+    <p>
+      This website doesn't really use cookies except to track that you clicked
+      on this annoying banner. It does look like the beer images are dragging
+      in some cookies and perhaps the gh-pages is using cookies to track visitors.
+      At any rate, to comply with European and other laws you understand that
+      this site may use cookies and that someone may be analysing the data
+      collected
+    </p>
+    <button (click)="acceptCookies()">Accept</button>
+  </div>
+}
