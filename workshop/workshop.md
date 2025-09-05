@@ -159,7 +159,7 @@ And we have a running Angular application being served on port localhost:4200 !
 
 The main page is the `src/index.html` page. This has a tag `<app-root></app-root>` in it's `<body>` tag. This is replaced by the angular app.
 
-The Angular app comes from the `src/app` files. Most importantly, the `app.ts` file is the TypeScript code for the `<app-root></app-root>` tag. In Angular-speak this is a Component as indicated with the `@Component`decorator. The selector let Angular find this Component and substitute it in place of the tag on the index.html page. What actually is rendered comes from the templateUrl directive which points to the file `app.html`.
+The Angular app comes from the `src/app` files. Most importantly, the `app.ts` file is the TypeScript code for the `<app-root></app-root>` tag. In Angular-speak this is a Component as indicated with the `@Component`decorator. The selector `app-root`let Angular find this Component and substitute it in place of the `<app-root></app-root>` tag on the index.html page. What actually is rendered comes from the `templateUrl` directive which points to the file `app.html`.
 
 # A List of Swiss Cantons
 
@@ -170,6 +170,14 @@ Let's open up `app.html`, delete all the code in it and replace it with
 ```
 
 ![Modifying the App](ModifyingTheApp.png "Modifying the App")
+
+Did you notice the WARNING in the VS Code Terminal window? `ng serve` constantly recompiles the code and any errors it encounters are shown in the terminal. To fix this error let's remove the `RouterOutlet` from the `app.ts` file. This is super useful for making your pages respond to the /thingYouWantToDo part of your URL but we won't get to that in this tutorial.
+
+```diff
+# in app.ts
+- imports: [RouterOutlet],
++ imports: [],
+```
 
 ## We need the data
 
@@ -219,7 +227,7 @@ Here is an Array of Swiss Cantons. Replace line 17 with the array.
   ];
 ```
 
-We may need to tell Angular that this is a standalone component (which is the modern way to do Angular; though modules continue to work fine.):
+We may need to tell Angular that this is a standalone component (which is the modern way to do Angular; modules still work fine for the time beeing):
 
 ```diff
 @Component({
@@ -233,7 +241,7 @@ We may need to tell Angular that this is a standalone component (which is the mo
 
 ## @for Loops
 
-Now head back to the app.html file and add the following code underneath the h1 tag:
+Now head back to the app.html file and add the following code underneath the `<h1>` tag:
 
 ```html{2}
 <table>
@@ -284,11 +292,13 @@ The Angular Compiler will now moan about not knowing what the ngModel directive 
 + import { FormsModule } from '@angular/forms';
 
 # and change the imports directive:
-- imports: [RouterOutlet],
-+ imports: [RouterOutlet, FormsModule],
+- imports: [],
++ imports: [FormsModule],
 ```
 
-We now have the checkboxes on the screen but when we click on them nothing happens. One approach would be to have a filter button that creates a new list. The special (click)="filter()" notation is an Angular thing that says when you click the button call the filter() function in the `app.ts` class.
+We now have the checkboxes on the screen but when we click on them nothing happens. One approach would be to have a filter button that creates a new list. The special `(click)="filter()"` notation is an Angular thing that says when you click the button call the `filter()` function in the `app.ts` class.
+
+Add a button to the `app.html` file:
 
 ```html
 <button (click)="filter()">Run the Filter</button>
@@ -308,7 +318,7 @@ Add the filter() function to the the `app.ts`class:
   }
 ```
 
-Now we need to use the `filteredCantons` in our `@for` loop instead of the `cantons` array:
+Still nothing happens! We need to use the `filteredCantons` in our `@for` loop instead of the `cantons` array:
 
 ```diff
 - @for (canton of cantons; track canton.code) {
@@ -334,9 +344,9 @@ And we need to add the addJura() function in the app.ts file:
 
 Try it out.
 
-But nothing happens when we click on the Add Jura button. If we click on the "Run the Filter" button it shows up.
+But nothing happens when we click on the Add Jura button! If we click on the "Run the Filter" button it shows up.
 
-Of course this is because we are adding the canton on Jura to the cantons array and not the filteredCantons array. We could fix that by calling the filter() function from the addJura function. But then we have to remember all the places we are doing this. Angular offers a better solution: Signals. A Signal wraps a piece of data with a change detection mechanism which informs dependant pieces of data to refresh and recalculate themselves (think Excel formulas).
+Of course this is because we are adding the canton of Jura to the `cantons`  array and not the `filteredCantons` array. We could fix that by calling the `filter()` function from the `addJura` function. But then we have to remember all the places we are doing this. Angular offers a better solution: Signals. A Signal wraps a piece of data with a change detection mechanism which informs dependant pieces of data to refresh and recalculate themselves (think Excel formulas).
 
 ## Converting to Signals
 
@@ -354,6 +364,7 @@ Let's make our language booleans a signal:
 + french = signal(true);
 + italian = signal(true);
 + romansh = signal(true);
+# don't keep the + (plus) Signs in front of the lines!
 ```
 
 We need to make our cantons array a signal:
@@ -367,9 +378,47 @@ We need to make our cantons array a signal:
  
 ```
 
-Remove the "Run The Filter" button.
+Remove the "Run The Filter" button in `app.html`
 
-Change this line in the addJura function
+Remove the `filter()` function in `app.ts`:
+
+```diff
+-  filter() {
+-    this.filteredCantons = this.cantons.filter(canton => {
+-      return (this.german && canton.languages.includes('DE')) ||
+-              (this.french && canton.languages.includes('FR')) ||
+-              (this.italian && canton.languages.includes('IT')) ||
+-              (this.romansh && canton.languages.includes('RM'));
+-    })
+-  }
+```
+
+Turn the `filteredCantons` into a computed signal:
+
+```typescript
+// replace
+filteredCantons: Canton[] = this.cantons;
+// with
+  filteredCantons = computed(() => {
+    const selectedLanguages: string[] = [];
+    if (this.german()) selectedLanguages.push('DE');
+    if (this.french()) selectedLanguages.push('FR');
+    if (this.italian()) selectedLanguages.push('IT');
+    if (this.romansh()) selectedLanguages.push('RM');
+
+    // If no languages are selected, show all cantons.
+    // Otherwise, filter the cantons array.
+    if (selectedLanguages.length === 0) {
+      return this.cantons();
+    }
+    
+    return this.cantons().filter(canton => 
+      canton.languages.some(lang => selectedLanguages.includes(lang))
+    );
+  });
+```
+
+Change this line in the addJura function in `app.ts`
 
 ```diff
 -  this.cantons.push(cantonJura);
@@ -388,6 +437,153 @@ Now everything is linked together with Signals and everything is reacting automa
 ## Take the data away into a service
 
 The data has no business being in there with the component that is rendering and filtering it. We should take it out and move it into a service. The service can then be injected to a compent that requires it.
+
+Open a new terminal window and type the `ng generate` command as follows:
+
+```bash
+richi@localhost:~/beer-app> ng generate service cantonService
+CREATE src/app/canton-service.spec.ts (357 bytes)
+CREATE src/app/canton-service.ts (117 bytes)
+```
+
+If you check the `cantonService.ts` file you will notice the `@Injectable` decorator. This marks this class as one that can be injected into other classes when it is needed.
+
+From our App class we now want to remove the `cantons`and `filteredCantons` signals and instead add them to the `CantonService` class. Also move the language signals. And the Canton interface.
+
+Update the import so that the `signal` and `computed` is imported:
+
+```diff
+- import { Injectable } from '@angular/core';
++ import { Injectable, signal, computed } from '@angular/core';
+```
+
+The CantonService will end up looking like this:
+
+```typescript
+import { Injectable, signal, computed } from '@angular/core';
+
+export interface Canton {
+  code: string;
+  languages: string[];
+  name: string;
+  flag: string;
+}
+
+@Injectable({
+  providedIn: 'root'
+})
+export class CantonService {
+    cantons = signal<Canton[]>([
+   { code: 'AG', languages: ['DE'], name: 'Aargau', flag: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Wappen_Aargau_matt.svg/40px-Wappen_Aargau_matt.svg.png' },
+   { code: 'AI', languages: ['DE'], name: 'Appenzell Innerrhoden', flag: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Wappen_Appenzell_Innerrhoden_matt.svg/40px-Wappen_Appenzell_Innerrhoden_matt.svg.png' },
+   { code: 'AR', languages: ['DE'], name: 'Appenzell Ausserrhoden', flag: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Wappen_Appenzell_Ausserrhoden_matt.svg/40px-Wappen_Appenzell_Ausserrhoden_matt.svg.png' },
+   { code: 'BE', languages: ['DE'], name: 'Bern', flag: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/CHE_Bern_COA.svg/40px-CHE_Bern_COA.svg.png' },
+   { code: 'BL', languages: ['DE'], name: 'Basel-Landschaft', flag: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Coat_of_arms_of_Kanton_Basel-Landschaft.svg/40px-Coat_of_arms_of_Kanton_Basel-Landschaft.svg.png' },
+   { code: 'BS', languages: ['DE'], name: 'Basel-Stadt', flag: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/Wappen_Basel-Stadt_matt.svg/40px-Wappen_Basel-Stadt_matt.svg.png'},
+   { code: 'FR', languages: ['DE', 'FR'], name: 'Freiburg', flag: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/01/Wappen_Freiburg_matt.svg/40px-Wappen_Freiburg_matt.svg.png' },
+   { code: 'GE', languages: ['FR'], name: 'Genf', flag: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/CHE_Canton_de_Gen%C3%A8ve_%C3%A9cu_seul_COA.svg/40px-CHE_Canton_de_Gen%C3%A8ve_%C3%A9cu_seul_COA.svg.png'},
+   { code: 'GL', languages: ['DE'], name: 'Glarus', flag: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Wappen_Glarus_matt.svg/40px-Wappen_Glarus_matt.svg.png'},
+   { code: 'GR', languages: ['DE', 'RM', 'IT'], name: 'Graubünden', flag: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/CHE_Graub%C3%BCnden_COA.svg/40px-CHE_Graub%C3%BCnden_COA.svg.png'},
+   { code: 'LU', languages: ['DE'], name: 'Luzern', flag: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Wappen_Luzern_matt.svg/40px-Wappen_Luzern_matt.svg.png'},
+   { code: 'NE', languages: ['FR'], name: 'Neuenburg', flag: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Wappen_Neuenburg_matt.svg/40px-Wappen_Neuenburg_matt.svg.png'},
+   { code: 'NW', languages: ['DE'], name: 'Nidwalden', flag: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Wappen_Nidwalden_matt.svg/40px-Wappen_Nidwalden_matt.svg.png'},
+   { code: 'OW', languages: ['DE'], name: 'Obwalden', flag: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Wappen_Obwalden_matt.svg/40px-Wappen_Obwalden_matt.svg.png'},
+   { code: 'SG', languages: ['DE'], name: 'St. Gallen', flag: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Coat_of_arms_of_canton_of_St._Gallen.svg/40px-Coat_of_arms_of_canton_of_St._Gallen.svg.png'},
+   { code: 'SH', languages: ['DE'], name: 'Schaffhausen', flag: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Wappen_Schaffhausen_matt.svg/40px-Wappen_Schaffhausen_matt.svg.png'},
+   { code: 'SO', languages: ['DE'], name: 'Solothurn', flag: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Wappen_Solothurn_matt.svg/40px-Wappen_Solothurn_matt.svg.png'},
+   { code: 'SZ', languages: ['DE'], name: 'Schwyz', flag: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/Wappen_Schwyz_matt.svg/40px-Wappen_Schwyz_matt.svg.png'},
+   { code: 'TG', languages: ['DE'], name: 'Thurgau', flag: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/Wappen_Thurgau_matt.svg/40px-Wappen_Thurgau_matt.svg.png'},
+   { code: 'TI', languages: ['IT'], name: 'Tessin', flag: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Wappen_Tessin_matt.svg/40px-Wappen_Tessin_matt.svg.png'},
+   { code: 'UR', languages: ['DE'], name: 'Uri', flag: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Wappen_Uri_matt.svg/40px-Wappen_Uri_matt.svg.png' },
+   { code: 'VD', languages: ['FR'], name: 'Waadt', flag: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Wappen_Waadt_matt.svg/40px-Wappen_Waadt_matt.svg.png'},
+   { code: 'VS', languages: ['DE', 'FR'], name: 'Wallis', flag: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/Wappen_Wallis_matt.svg/40px-Wappen_Wallis_matt.svg.png'},
+   { code: 'ZG', languages: ['DE'], name: 'Zug', flag: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Wappen_Zug_matt.svg/40px-Wappen_Zug_matt.svg.png'},
+   { code: 'ZH', languages: ['DE'], name: 'Zürich', flag: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Wappen_Z%C3%BCrich_matt.svg/40px-Wappen_Z%C3%BCrich_matt.svg.png'}
+  ]);
+
+  german = signal(true);
+  french = signal(true);
+  italian = signal(true);
+  romansh = signal(true);
+
+  filteredCantons = computed(() => {
+    const selectedLanguages: string[] = [];
+    if (this.german()) selectedLanguages.push('DE');
+    if (this.french()) selectedLanguages.push('FR');
+    if (this.italian()) selectedLanguages.push('IT');
+    if (this.romansh()) selectedLanguages.push('RM');
+
+    // If no languages are selected, show all cantons.
+    // Otherwise, filter the cantons array.
+    if (selectedLanguages.length === 0) {
+      return this.cantons();
+    }
+    
+    return this.cantons().filter(canton => 
+      canton.languages.some(lang => selectedLanguages.includes(lang))
+    );
+  });
+}
+```
+
+We need to inject the signal into our `App` class:
+
+```diff
++ import { Canton, CantonService } from './canton-service';
+
+// add inside the App class:
++ cantonService = inject(CantonService);
++ filteredCantons = this.cantonService.filteredCantons;
+
+// fix the addJura function
+  addJura() {
+    let cantonJura:Canton = { code: 'JU', languages: ['FR'], name: 'Jura', flag: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f0/Wappen_Jura_matt.svg/40px-Wappen_Jura_matt.svg.png'};
+-    this.cantons.update(currentCantons => [...currentCantons, cantonJura]);
++    this.cantonsService.cantons.update(currentCantons => [...currentCantons, cantonJura]);
+  }
+```
+
+`App.ts` now looks like this:
+
+```typescript
+import { Component, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { Canton, CantonService } from './canton-service';
+
+@Component({
+  selector: 'app-root',
+  imports: [FormsModule],
+  templateUrl: './app.html',
+  styleUrl: './app.css',
+  standalone: true
+})
+export class App {
+
+  cantonService = inject(CantonService);
+  filteredCantons = this.cantonService.filteredCantons;
+
+  addJura() {
+    let cantonJura:Canton = { code: 'JU', languages: ['FR'], name: 'Jura', flag: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f0/Wappen_Jura_matt.svg/40px-Wappen_Jura_matt.svg.png'};
+    this.cantonService.cantons.update(currentCantons => [...currentCantons, cantonJura]);
+  }
+
+}
+```
+
+We also have to fix up `App.html` to specify that the boolean signals now come from the injected `cantonService` Service.
+
+```html
+<label for="German">German</label>
+<input type="checkbox" name="German" [(ngModel)]="cantonService.german"><br>
+<label for="French">French</label>
+<input type="checkbox" name="French" [(ngModel)]="cantonService.french"><br>
+<label for="Italian">Italian</label>
+<input type="checkbox" name="Italian" [(ngModel)]="cantonService.italian"><br>
+<label for="Romansh">Romansh</label>
+<input type="checkbox" name="Romansh" [(ngModel)]="cantonService.romansh"><br>
+```
+
+
 
 ## Let's turn the list of cantons into a dropdown list
 
