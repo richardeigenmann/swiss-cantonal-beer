@@ -473,7 +473,7 @@ export interface Canton {
   providedIn: 'root'
 })
 export class CantonService {
-    cantons = signal<Canton[]>([
+   cantons = signal<Canton[]>([
    { code: 'AG', languages: ['DE'], name: 'Aargau', flag: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Wappen_Aargau_matt.svg/40px-Wappen_Aargau_matt.svg.png' },
    { code: 'AI', languages: ['DE'], name: 'Appenzell Innerrhoden', flag: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Wappen_Appenzell_Innerrhoden_matt.svg/40px-Wappen_Appenzell_Innerrhoden_matt.svg.png' },
    { code: 'AR', languages: ['DE'], name: 'Appenzell Ausserrhoden', flag: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Wappen_Appenzell_Ausserrhoden_matt.svg/40px-Wappen_Appenzell_Ausserrhoden_matt.svg.png' },
@@ -526,7 +526,7 @@ export class CantonService {
 }
 ```
 
-We need to inject the signal into our `App` class:
+We need to inject the Service into our `App` class:
 
 ```diff
 + import { Canton, CantonService } from './canton-service';
@@ -583,11 +583,137 @@ We also have to fix up `App.html` to specify that the boolean signals now come f
 <input type="checkbox" name="Romansh" [(ngModel)]="cantonService.romansh"><br>
 ```
 
-
+And it looks just like it did before.
 
 ## Let's turn the list of cantons into a dropdown list
 
-A dropdown in a separate component that signals back to it's parent that it changed.
+Angular allows us to create lots of small components that we can use to compose larger components. We will create a `selectCanton` dropdown component. On the command line (was that your second terminal window?) type:
+
+```bash
+richi@localhost:~/beer-app> ng generate component selectCanton
+CREATE src/app/select-canton/select-canton.css (0 bytes)
+CREATE src/app/select-canton/select-canton.spec.ts (571 bytes)
+CREATE src/app/select-canton/select-canton.ts (212 bytes)
+CREATE src/app/select-canton/select-canton.html (28 bytes)
+```
+
+Import the new component to the `app.ts` file:
+
+```typescript
+import { SelectCanton } from "./select-canton/select-canton";
+```
+
+Now remove all the code we have in `app.html` and replace it with:
+
+```html
+<app-select-canton></app-select-canton>
+```
+
+Our browser window should look like this:
+
+![select-canton-works.png](select-canton-works.png "The widget is rendering it's default text")
+
+This tells us that we are rendering the new component in the place of the tag we defined.
+
+To make the GUI look nice we can use Angular Material we install it like so:
+
+```bash
+ng add @angular/material
+
+✔ Determining Package Manager
+  › Using package manager: npm
+✔ Searching for compatible package version
+  › Found compatible package version: @angular/material@20.2.2.
+✔ Loading package information from registry
+✔ Confirming installation
+✔ Installing package
+✔ Select a pair of starter prebuilt color palettes for your Angular Material theme Magenta/Violet  
+   [Preview: https://material.angular.dev?theme=magenta-violet]
+UPDATE package.json (1198 bytes)
+✔ Packages installed successfully.
+CREATE src/custom-theme.scss (1151 bytes)
+UPDATE angular.json (2441 bytes)
+UPDATE src/index.html (493 bytes)
+UPDATE src/styles.css (181 bytes)
+```
+
+The new `select-canton.ts` file needs to inject the `CantonService` and it needs to have an @output declaration so that the result of the selection can be passed back to the parent component. We also need to impoort some stuff for Angular Material to do it's magic. It ends up looking like this:
+
+```typescript
+import { Component, inject } from '@angular/core';
+import { CantonService } from '../canton-service';
+import { MatSelectModule } from '@angular/material/select';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { FormsModule } from '@angular/forms';
+
+@Component({
+  selector: 'app-select-canton',
+  imports: [
+    MatFormFieldModule,
+    MatSelectModule,
+    MatIconModule,
+    MatInputModule,
+    FormsModule,
+  ],
+  templateUrl: './select-canton.html',
+  styleUrl: './select-canton.css'
+})
+export class SelectCanton {
+  cantonService = inject(CantonService);
+}
+```
+
+
+The code for the dropdown looks like this. Add it to select-canton.html:
+
+```html
+      <mat-form-field class="canton-select">
+        <mat-label>Choose a Canton:</mat-label>
+        <mat-select (selectionChange)="onSelectionChange($event.value)">
+          @for (canton of cantons(); track canton.code) {
+            <mat-option [value]="canton.code">
+              <img [src]="canton.flag" class="flag-icon" alt="{{ canton.name }} flag">
+              {{ canton.name }}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+```
+
+To style the dropdown menu add this CSS to the `select-canton.css` file.
+
+```css
+.canton-select {
+  width: 30ch;
+}
+
+.flag-icon {
+  width: 24px; /* Adjust the width as needed */
+  height: auto;
+  margin-right: 8px; /* Adds some spacing between the flag and the text */
+  vertical-align: middle;
+}
+```
+
+The parent component needs to respond to the change of the canton. We add this code to `app.ts`
+
+```typescript
+  selectedCantonCode = signal<string>('');
+  onCantonChanged(cantonCode: string) {
+    this.selectedCantonCode.set(cantonCode);
+  }
+```
+
+We can verify this is working by changing the code on the `app.html` page to:
+
+```html
+<app-select-canton (cantonChange)="onCantonChanged($event)"></app-select-canton>
+{{selectedCantonCode()}}
+```
+
+![PickingACantonAndCommunicatingToParent.png](PickingACantonAndCommunicatingToParent.png "Picking a canton and communicating to parent")
 
 ## Let's add a component that shows the beers of the canton
 
