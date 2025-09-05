@@ -26,10 +26,13 @@ npm install -g @angular/cli
 
 ![Install Angular](InstallAngular.png "Install Angular")
 
-```bash
+```bash{3}
 # check the version of Angular that is installed:
 # (back as non-root)
 ng v
+```
+
+```
 
      _                      _                 ____ _     ___
     / \   _ __   __ _ _   _| | __ _ _ __     / ___| |   |_ _|
@@ -66,6 +69,9 @@ You can set up the app from a terminal inside VS Code but I would do this on the
 
 ```bash
 ng new beer-app
+```
+
+```
 # Angular will ask you a number of questions. Some may be different or omitted if you have done this before.
 
  Would you like to enable autocompletion? This will set up your terminal so pressing TAB while typing Angular CLI commands will show 
@@ -232,7 +238,7 @@ We may need to tell Angular that this is a standalone component (which is the mo
 
 Now head back to the app.html file and add the following code underneath the h1 tag:
 
-```html
+```html{2}
 <table>
 @for (canton of cantons; track canton.code) {
     <tr>
@@ -276,14 +282,13 @@ Then we create the checkboxes on the `app.html` file under the `<h1>` tag. Note 
 
 The Angular Compiler will now moan about not knowing what the ngModel directive is. We fix this by adding the FormsModule to the imports:
 
-```TypeScript
+```diff
 # add this to the top of the app.ts file
-import { FormsModule } from '@angular/forms';
++ import { FormsModule } from '@angular/forms';
 
-# change this 
-imports: [RouterOutlet],
-# to
-imports: [RouterOutlet, FormsModule],
+# and change the imports directive:
+- imports: [RouterOutlet],
++ imports: [RouterOutlet, FormsModule],
 ```
 
 We now have the checkboxes on the screen but when we click on them nothing happens. One approach would be to have a filter button that creates a new list. The special (click)="filter()" notation is an Angular thing that says when you click the button call the filter() function in the `app.ts` class.
@@ -308,11 +313,9 @@ Add the filter() function to the the `app.ts`class:
 
 Now we need to use the `filteredCantons` in our `@for` loop instead of the `cantons` array:
 
-```html
-  <!-- change this -->
-  @for (canton of cantons; track canton.code) {
-  <!-- to -->
-  @for (canton of filteredCantons; track canton.code) {
+```diff
+- @for (canton of cantons; track canton.code) {
++ @for (canton of filteredCantons; track canton.code) {
 ```
 
 We now have something that works. But wait, what happened to the canton of Jura? They were only spun off from Berne in 1979. We seem to have missed them. Let's add a button to add the missing canton:
@@ -342,51 +345,45 @@ Of course this is because we are adding the canton on Jura to the cantons array 
 
 Let's make our language booleans a signal:
 
-```TypeScript
+```diff
 # add to the top of app.ts:
-import { signal, computed } from '@angular/core';
++ import { signal, computed } from '@angular/core';
 
-# Change
-  german: boolean = true;
-  french: boolean = true;
-  italian: boolean = true;
-  romansh: boolean = true;
-# to:
-  german = signal(true);
-  french = signal(true);
-  italian = signal(true);
-  romansh = signal(true);
+- german: boolean = true;
+- french: boolean = true;
+- italian: boolean = true;
+- romansh: boolean = true;
++ german = signal(true);
++ french = signal(true);
++ italian = signal(true);
++ romansh = signal(true);
 ```
 
 We need to make our cantons array a signal:
 
-```TypeScript
-  # change
-  cantons: Canton[] = [
-  # to
-  cantons = signal<Canton[]>([
-    ...
-  # don't forget the extra closing brace at the bottom of the list!
-  ]);
+```diff
+- cantons: Canton[] = [
++ cantons = signal<Canton[]>([
+    [...]
+-  ];
++  ]); # don't forget the extra closing brace at the bottom of the list!
  
 ```
 
 Remove the "Run The Filter" button.
 
-```TypeScript
-  # Change this line in the addJura function
-  this.cantons.push(cantonJura);
-  # to:
-  this.cantons.update(currentCantons => [...currentCantons, cantonJura]);
+Change this line in the addJura function
+
+```diff
+-  this.cantons.push(cantonJura);
++  this.cantons.update(currentCantons => [...currentCantons, cantonJura]);
 ```
 
 And we need to change the @for from an array to a signal:
 
-```html
-<!-- change -->
-filteredCantons
-<!-- to -->
-filteredCantons()
+```diff
+- filteredCantons
++ filteredCantons()
 ```
 
 Now everything is linked together with Signals and everything is reacting automatically to the underlying data changes!
@@ -400,6 +397,8 @@ The data has no business being in there with the component that is rendering and
 A dropdown in a separate component that signals back to it's parent that it changed.
 
 ## Let's add a component that shows the beers of the canton
+
+## Let's get the data from a REST URL
 
 ## Add a footer
 
