@@ -7,6 +7,12 @@ See the page live here:
 
 <https://richardeigenmann.github.io/swiss-cantonal-beer/>
 
+I am turning this project into a workshop tutorial:
+
+<https://github.com/richardeigenmann/swiss-cantonal-beer/blob/main/workshop/workshop.md>
+
+## Beer
+
 While coding this app I discovered a much more comprehensive and serious website. Check it out here: <https://ilovebeer.ch/de>
 
 ## The interesting parts of the application
