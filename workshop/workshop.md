@@ -1088,6 +1088,290 @@ export const appConfig: ApplicationConfig = {
 };
 ```
 
+## Add a cookie banner
+
+Maybe we have to put a cookie banner on our page. Here is how to do that:
+
+```bash
+richi@localhost:~/beer-app> ng generate component CookieBanner
+CREATE src/app/cookie-banner/cookie-banner.css (0 bytes)
+CREATE src/app/cookie-banner/cookie-banner.spec.ts (571 bytes)
+CREATE src/app/cookie-banner/cookie-banner.ts (212 bytes)
+CREATE src/app/cookie-banner/cookie-banner.html (28 bytes)
+```
+
+Add the component to `app.html`:
+
+```diff
+<app-select-canton (cantonChange)="onCantonChanged($event)"></app-select-canton>
+<app-beer-list [selectedCanton]="selectedCantonCode()"></app-beer-list>
++<app-cookie-banner></app-cookie-banner>
+```
+
+Import it to `app.ts`:
+
+```diff
+import { Component, inject, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { Canton, CantonService } from './canton-service';
+import { SelectCanton } from "./select-canton/select-canton";
+import { BeerList } from './beer-list/beer-list';
++ import { CookieBanner } from "./cookie-banner/cookie-banner";
+
+@Component({
+  selector: 'app-root',
+-  imports: [FormsModule, SelectCanton, BeerList],
++  imports: [FormsModule, SelectCanton, BeerList, CookieBanner],
+  templateUrl: './app.html',
+  styleUrl: './app.css',
+  standalone: true
+})
+export class App {
+
+  cantonService = inject(CantonService);
+  filteredCantons = this.cantonService.filteredCantons;
+
+  addJura() {
+    let cantonJura:Canton = { code: 'JU', languages: ['FR'], name: 'Jura', flag: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f0/Wappen_Jura_matt.svg/40px-Wappen_Jura_matt.svg.png'};
+    this.cantonService.cantons.update(currentCantons => [...currentCantons, cantonJura]);
+  }
+
+  selectedCantonCode = signal<string>('');
+  onCantonChanged(cantonCode: string) {
+    this.selectedCantonCode.set(cantonCode);
+  }
+
+}
+```
+
+Make sure you saved all your files and possibly you have to restart the `ng serve`. The `cookie-banner works!cookie-banner works` text should show up. We need to implement the banner:
+
+`cookie-banner.ts`
+
+```diff
+export class CookieBanner {
++  cookieAccepted(): boolean {
++    return localStorage.getItem('cookieAccepted') === 'true';
++  }
+
++  acceptCookies(): void {
++    localStorage.setItem('cookieAccepted', 'true');
++  }
+}
+```
+
+`cookie-banner.html`
+
+```html
+@if (! cookieAccepted() ) {
+  <div class="cookie-banner">
+    <h1>Annoying Cookie Banner</h1>
+    <p>
+      This website doesn't really use cookies except to track that you clicked
+      on this annoying banner. It does look like the beer images are dragging
+      in some cookies and perhaps the gh-pages is using cookies to track visitors.
+      At any rate, to comply with European and other laws you understand that
+      this site may use cookies and that someone may be analysing the data
+      collected
+    </p>
+    <button (click)="acceptCookies()">Accept</button>
+  </div>
+}
+```
+
+`cookie-banner.css`
+
+```css
+.cookie-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  padding: 15px;
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.cookie-banner p {
+  margin: 0;
+  flex-grow: 1;
+}
+
+.cookie-banner button {
+  background-color: #fff;
+  color: #333;
+  border: none;
+  padding: 8px 15px;
+  cursor: pointer;
+  margin-left: 20px;
+  border-radius: 5px;
+}
+```
+
 ## Add a footer
 
+```bash
+richi@localhost:~/beer-app> ng generate component Footer
+CREATE src/app/footer/footer.css (0 bytes)
+CREATE src/app/footer/footer.spec.ts (528 bytes)
+CREATE src/app/footer/footer.ts (185 bytes)
+CREATE src/app/footer/footer.html (21 bytes)
+```
+
+Add the component to `app.html`:
+
+```diff
+<app-select-canton (cantonChange)="onCantonChanged($event)"></app-select-canton>
+<app-beer-list [selectedCanton]="selectedCantonCode()"></app-beer-list>
+<app-cookie-banner></app-cookie-banner>
++ <app-footer></app-footer>
+```
+
+Import it to `app.ts`:
+
+```diff
+import { Component, inject, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { Canton, CantonService } from './canton-service';
+import { SelectCanton } from "./select-canton/select-canton";
+import { BeerList } from './beer-list/beer-list';
+import { CookieBanner } from "./cookie-banner/cookie-banner";
++ import { Footer } from "./footer/footer";
+
+@Component({
+  selector: 'app-root',
+-  imports: [FormsModule, SelectCanton, BeerList, CookieBanner],
++  imports: [FormsModule, SelectCanton, BeerList, CookieBanner, Footer],
+  templateUrl: './app.html',
+  styleUrl: './app.css',
+  standalone: true
+})
+export class App {
+
+  cantonService = inject(CantonService);
+  filteredCantons = this.cantonService.filteredCantons;
+
+  addJura() {
+    let cantonJura:Canton = { code: 'JU', languages: ['FR'], name: 'Jura', flag: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f0/Wappen_Jura_matt.svg/40px-Wappen_Jura_matt.svg.png'};
+    this.cantonService.cantons.update(currentCantons => [...currentCantons, cantonJura]);
+  }
+
+  selectedCantonCode = signal<string>('');
+  onCantonChanged(cantonCode: string) {
+    this.selectedCantonCode.set(cantonCode);
+  }
+
+}
+```
+
+Again `footer works!` shows up.
+
+Change `footer.html` to something like this:
+
+```html
+<footer>
+  <p>Prepared by Richard Eigenmann, 2025<br>
+  Workshop: <a href="https://github.com/richardeigenmann/swiss-cantonal-beer/blob/main/workshop/workshop.md">https://github.com/richardeigenmann/swiss-cantonal-beer/blob/main/workshop/workshop.md</a>
+  </p>
+</footer>
+```
+
+`footer.css`
+
+```css
+footer {
+  background-color:rgba(255, 255, 255, 0.7);
+}
+```
+
 ## Add some styling
+
+`styles.css`
+
+```diff
+/* You can add global styles to this file, and also import other style files */
+
+html, body { height: 100%; }
+- body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+# add this instead
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  background-image: url('https://github.com/richardeigenmann/swiss-cantonal-beer/blob/main/src/assets/SwissBeerBackground.png?raw=true');
+  background-size: cover; /* Optional: ensures the image covers the entire background */
+  background-position: center; /* Optional: centers the image */
+  background-repeat: no-repeat; /* Optional: prevents the image from repeating */
+}
+```
+
+## Deploy your application
+
+Use the `ng build` command to compile the files into a deployable bundle.
+
+```bash
+richi@localhost:~/beer-app> ng build
+Initial chunk files   | Names         |  Raw size | Estimated transfer size
+main-CDOWEMOU.js      | main          | 464.88 kB |               109.53 kB
+polyfills-5CFQRCPP.js | polyfills     |  34.59 kB |                11.33 kB
+styles-TKAKUUBJ.css   | styles        |   8.32 kB |                 1.45 kB
+
+                      | Initial total | 507.78 kB |               122.31 kB
+
+Application bundle generation complete. [11.013 seconds]
+
+▲ [WARNING] bundle initial exceeded maximum budget. Budget 500.00 kB was not met by 7.78 kB with a total of 507.78 kB.
+
+
+Output location: /home/richi/beer-app/dist/beer-app
+```
+
+As the output says you now have all needed files in the `dist/beer-app` folder:
+
+```bash
+richi@localhost:~/beer-app> tree /home/richi/beer-app/dist/beer-app
+/home/richi/beer-app/dist/beer-app
+├── 3rdpartylicenses.txt
+├── browser
+│   ├── favicon.ico
+│   ├── index.html
+│   ├── main-CDOWEMOU.js
+│   ├── polyfills-5CFQRCPP.js
+│   └── styles-TKAKUUBJ.css
+└── prerendered-routes.json
+```
+
+We can quickly serve up the page with the Node http-server:
+
+```bash
+npm install http-server
+cd dist/beer-app/browser/
+/home/richi/beer-app/node_modules/http-server/bin/http-server -p 4201
+```
+
+Open your browser on <a href="http://localhost:4201/">http://localhost:4201</a>
+
+You can deploy the files in beer-app/dist/browser to any webserver you have and let it serve up index.html
+
+Congratulations, you have reached the end of this workshop. You have learned:
+
+- How to create an Angular Application
+- How to use the `ng serve` and `ng serve -o` command to serve your page
+- Angular Signals
+- How to create Components with `ng generate component xxx`
+- How to create Services and inject them to components
+- How to pass data from Child Components to Parent Components (the selected canton)
+- How to pass data from a Parent Component to a Child Component
+- How to filter a list
+- How to retrieve data from an external site
+- How do do the annoying cookie banners
+- How to add a footer to your page
+- How to build the application for deployment
