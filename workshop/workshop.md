@@ -1366,6 +1366,9 @@ Congratulations, you have reached the end of this workshop. You have learned:
 - How to create an Angular Application
 - How to use the `ng serve` and `ng serve -o` command to serve your page
 - Angular Signals
+- How Angular does change detection
+- How to connect buttons to TypeScript functions
+- Data Binding from Forms to TypeScript data structures
 - How to create Components with `ng generate component xxx`
 - How to create Services and inject them to components
 - How to pass data from Child Components to Parent Components (the selected canton)
