@@ -1013,7 +1013,80 @@ We can argue that the list of Swiss Cantons is pretty static and won't change on
 
 I have put the beer list as a JSON onto this URL:
 
+<https://raw.githubusercontent.com/richardeigenmann/swiss-cantonal-beer/refs/heads/main/workshop/beerlist.json>
 
+Now change the `beer-list.ts` as follows:
+
+```typescript
+import { HttpClient } from '@angular/common/http';
+import { Injectable, Signal, signal } from '@angular/core';
+import { tap } from 'rxjs';
+
+export interface Beer {
+  name: string;
+  brewery: string;
+  imageUrl?: string;
+}
+
+export type CantonBeerMap = Record<string, Beer[]>;
+
+@Injectable({
+  providedIn: 'root'
+})
+export class BeerService {
+  private readonly BEER_DATA_URL = 'https://raw.githubusercontent.com/richardeigenmann/swiss-cantonal-beer/refs/heads/main/workshop/beerlist.json';
+  private readonly _cantonBeers = signal<CantonBeerMap>({});
+
+  // Expose the signal as read-only for use in components
+  readonly cantonBeers: Signal<CantonBeerMap> = this._cantonBeers.asReadonly();
+
+  constructor(private http: HttpClient) { 
+    this.loadBeers();
+  }
+
+  /**
+   * Fetches beer data from the remote URL and updates the signal.
+   * Components should call this method to load the data.
+   */
+  loadBeers(): void {
+    console.log('Fetching beer data from URL...');
+    this.http.get<CantonBeerMap>(this.BEER_DATA_URL)
+      .pipe(
+        tap(data => {
+          console.log('Beer data loaded successfully.');
+          this._cantonBeers.set(data);
+        })
+      )
+      .subscribe({
+        error: (error) => console.error('Failed to load beer data', error)
+      });
+  }
+
+  // Method to get a specific canton's beers
+  getBeersByCanton(cantonCode: string): Beer[] | undefined {
+    return this._cantonBeers()[cantonCode];
+  }
+}
+```
+
+But it won't work until we add the `HttpClientModule` to the `app.config.ts` to make it available throughout the application.
+
+```diff
+import { ApplicationConfig, provideBrowserGlobalErrorListeners, provideZoneChangeDetection } from '@angular/core';
+import { provideRouter } from '@angular/router';
++ import { provideHttpClient } from '@angular/common/http';
+
+import { routes } from './app.routes';
+
+export const appConfig: ApplicationConfig = {
+  providers: [
+    provideBrowserGlobalErrorListeners(),
+    provideZoneChangeDetection({ eventCoalescing: true }),
+    provideRouter(routes),
++    provideHttpClient(),
+  ]
+};
+```
 
 ## Add a footer
 
