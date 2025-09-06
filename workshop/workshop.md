@@ -952,7 +952,7 @@ And now we can do the `@for`over our beers. Note that we have some extra logic w
 }
 ```
 
-And let's add some styling to make the list look great:
+And let's add some styling on `beer-list.css` to make the list look great:
 
 ```css
 .beer-list-container {
@@ -1003,11 +1003,17 @@ And let's add some styling to make the list look great:
 }
 ```
 
-To clean things up, remove the `{{selectedCantonCode()}}` from the `app.html`
+To clean things up, remove the `{{selectedCantonCode()}}` from the `app.html`. The final page should look like this:
 
 ![WorkingBeerApp.png](WorkingBeerApp.png "Working Beer App")
 
 ## Let's get the data from a REST URL
+
+We can argue that the list of Swiss Cantons is pretty static and won't change on us (at least less frequently than we will have to update our app and re-release it) so hard coding that as an array in our App is OK. But the beers are likely to change quickly so we would probably want this to come from a database. In the front end we are just concerned that we can retrieve a JSON from a URL. So let's implement that.
+
+I have put the beer list as a JSON onto this URL:
+
+
 
 ## Add a footer
 
