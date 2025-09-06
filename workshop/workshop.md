@@ -1293,11 +1293,9 @@ footer {
 
 ## Add some styling
 
-`styles.css`
+Modify the `styles.css` file.
 
 ```diff
-/* You can add global styles to this file, and also import other style files */
-
 html, body { height: 100%; }
 - body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
@@ -1360,6 +1358,8 @@ cd dist/beer-app/browser/
 Open your browser on <a href="http://localhost:4201/">http://localhost:4201</a>
 
 You can deploy the files in beer-app/dist/browser to any webserver you have and let it serve up index.html
+
+# End of Workshop
 
 Congratulations, you have reached the end of this workshop. You have learned:
 
