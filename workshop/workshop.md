@@ -693,8 +693,8 @@ The code for the dropdown looks like this. Add it to `select-canton.html`:
 ```html
       <mat-form-field class="canton-select">
         <mat-label>Choose a Canton:</mat-label>
-        <mat-select (selectionChange)="onSelectionChange($event.value)">
-          @for (canton of cantonsService.cantons(); track canton.code) {
+        <mat-select [(ngModel)]="selectedCantonCode">
+          @for (canton of cantonService.cantons(); track canton.code) {
             <mat-option [value]="canton.code">
               <img [src]="canton.flag" class="flag-icon" alt="{{ canton.name }} flag">
               {{ canton.name }}
