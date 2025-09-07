@@ -777,8 +777,10 @@ We want to pass the selected Canton to the new component.
 
 Add an `input` Signal to the `beer-list.ts`
 
-```typescript
-selectedCanton = input<string | undefined>();
+```diff
++ import { Component, computed, inject, input } from '@angular/core';
+
++ selectedCanton = input<string | undefined>();
 ```
 
 Pass the cantonCode to the child component in `app.ts`:
