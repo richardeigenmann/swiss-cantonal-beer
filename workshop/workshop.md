@@ -159,7 +159,7 @@ And we have a running Angular application being served on port localhost:4200 !
 
 The main page is the `src/index.html` page. This has a tag `<app-root></app-root>` in it's `<body>` tag. This is replaced by the angular app.
 
-The Angular app comes from the `src/app` files. Most importantly, the `app.ts` file is the TypeScript code for the `<app-root></app-root>` tag. In Angular-speak this is a Component as indicated with the `@Component`decorator. The selector `app-root`let Angular find this Component and substitute it in place of the `<app-root></app-root>` tag on the index.html page. What actually is rendered comes from the `templateUrl` directive which points to the file `app.html`.
+The Angular app comes from the `src/app` files. Most importantly, the `app.ts` file is the TypeScript code for the `<app-root></app-root>` tag. In Angular-speak this is a Component as indicated with the `@Component`decorator. The selector `app-root` lets Angular find this Component and substitute it in place of the `<app-root></app-root>` tag on the index.html page. What actually is rendered comes from the `templateUrl` directive which points to the file `app.html`.
 
 # A List of Swiss Cantons
 
@@ -171,10 +171,11 @@ Let's open up `app.html`, delete all the code in it and replace it with
 
 ![Modifying the App](ModifyingTheApp.png "Modifying the App")
 
-Did you notice the WARNING in the VS Code Terminal window? `ng serve` constantly recompiles the code and any errors it encounters are shown in the terminal. To fix this error let's remove the `RouterOutlet` from the `app.ts` file. This is super useful for making your pages respond to the /thingYouWantToDo part of your URL but we won't get to that in this tutorial.
+Did you notice the WARNING in the VS Code Terminal window? `ng serve` constantly recompiles the code and any errors it encounters are shown in the terminal. To fix this error let's remove the `RouterOutlet` from the `app.ts` file. The Router is super useful for making your pages respond to the `/ThingYouWantToDo` part of your URL but we won't get to that in this tutorial.
 
 ```diff
 # in app.ts
+- import { RouterOutlet } from '@angular/router';
 - imports: [RouterOutlet],
 + imports: [],
 ```
@@ -184,6 +185,7 @@ Did you notice the WARNING in the VS Code Terminal window? `ng serve` constantly
 Let's create a list of the cantons in Switzerland. A Canton has a code, a name and a flag. Let's also record the offical languages used in the canton. Here is an Typescript interface for this type:
 
 ```ts
+# add to app.ts
 export interface Canton {
   code: string;
   languages: string[];
@@ -241,7 +243,7 @@ We may need to tell Angular that this is a standalone component (which is the mo
 
 ## @for Loops
 
-Now head back to the app.html file and add the following code underneath the `<h1>` tag:
+Now head back to the `app.html` file and add the following code underneath the `<h1>` tag:
 
 ```html{2}
 <table>
@@ -285,7 +287,7 @@ Then we create the checkboxes on the `app.html` file under the `<h1>` tag. Note 
 <input type="checkbox" name="Romansh" [(ngModel)]="romansh"><br>
 ```
 
-The Angular Compiler will now moan about not knowing what the ngModel directive is. We fix this by adding the FormsModule to the imports:
+The Angular Compiler will now moan about not knowing what the ngModel directive is. We fix this by adding the `FormsModule` to the imports on `app.ts`:
 
 ```diff
 # add this to the top of the app.ts file
@@ -318,7 +320,7 @@ Add the filter() function to the the `app.ts`class:
   }
 ```
 
-Still nothing happens! We need to use the `filteredCantons` in our `@for` loop instead of the `cantons` array:
+Still nothing happens! We need to use the `filteredCantons` in our `@for` loop instead of the `cantons` array in `app.html`:
 
 ```diff
 - @for (canton of cantons; track canton.code) {
@@ -342,19 +344,20 @@ And we need to add the addJura() function in the app.ts file:
   }
 ```
 
-Try it out.
+Try it out: Leave `German`unticked, Run the Filter and Add Jura.
 
 But nothing happens when we click on the Add Jura button! If we click on the "Run the Filter" button it shows up.
 
-Of course this is because we are adding the canton of Jura to the `cantons`  array and not the `filteredCantons` array. We could fix that by calling the `filter()` function from the `addJura` function. But then we have to remember all the places we are doing this. Angular offers a better solution: Signals. A Signal wraps a piece of data with a change detection mechanism which informs dependant pieces of data to refresh and recalculate themselves (think Excel formulas).
+Of course this is because we are adding the canton of Jura to the `cantons`  array and not the `filteredCantons` array. We could fix that by calling the `filter()` function from the `addJura` function. But then we have to remember all the places we are doing this. Angular offers a better solution: Signals. A Signal wraps a piece of data with a change detection mechanism which informs dependant pieces of data to refresh and recalculate themselves (think Excel formulas or database views).
 
 ## Converting to Signals
 
-Let's make our language booleans a signal:
+Let's make our language booleans a signal. In `app.ts`:
 
 ```diff
 # add to the top of app.ts:
-+ import { signal, computed } from '@angular/core';
+- import { Component, signal } from '@angular/core';
++ import { Component, signal, computed } from '@angular/core';
 
 - german: boolean = true;
 - french: boolean = true;
@@ -377,8 +380,6 @@ We need to make our cantons array a signal:
 +  ]); # don't forget the extra closing brace at the bottom of the list!
  
 ```
-
-Remove the "Run The Filter" button in `app.html`
 
 Remove the `filter()` function in `app.ts`:
 
@@ -425,9 +426,11 @@ Change this line in the addJura function in `app.ts`
 +  this.cantons.update(currentCantons => [...currentCantons, cantonJura]);
 ```
 
-And we need to change the @for from an array to a signal:
+Remove the "Run The Filter" button in `app.html` and we need to change the @for from an array to a signal:
 
 ```diff
+- <button (click)="filter()">Run the Filter</button>
+
 - filteredCantons
 + filteredCantons()
 ```
@@ -450,7 +453,7 @@ If you check the `cantonService.ts` file you will notice the `@Injectable` decor
 
 From our App class we now want to remove the `cantons`and `filteredCantons` signals and instead add them to the `CantonService` class. Also move the language signals. And the Canton interface.
 
-Update the import so that the `signal` and `computed` is imported:
+Update the import so that the `signal` and `computed` is imported in `canton-service.ts`:
 
 ```diff
 - import { Injectable } from '@angular/core';
@@ -529,7 +532,13 @@ export class CantonService {
 We need to inject the Service into our `App` class:
 
 ```diff
+- import { Component, signal, computed } from '@angular/core';
++ import { Component, inject } from '@angular/core';
 + import { Canton, CantonService } from './canton-service';
+
+// remove the Canton interface
+
+// remove all the sginals
 
 // add inside the App class:
 + cantonService = inject(CantonService);
@@ -539,7 +548,7 @@ We need to inject the Service into our `App` class:
   addJura() {
     let cantonJura:Canton = { code: 'JU', languages: ['FR'], name: 'Jura', flag: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f0/Wappen_Jura_matt.svg/40px-Wappen_Jura_matt.svg.png'};
 -    this.cantons.update(currentCantons => [...currentCantons, cantonJura]);
-+    this.cantonsService.cantons.update(currentCantons => [...currentCantons, cantonJura]);
++    this.cantonService.cantons.update(currentCantons => [...currentCantons, cantonJura]);
   }
 ```
 
@@ -599,8 +608,11 @@ CREATE src/app/select-canton/select-canton.html (28 bytes)
 
 Import the new component to the `app.ts` file:
 
-```typescript
-import { SelectCanton } from "./select-canton/select-canton";
+```diff
++ import { SelectCanton } from "./select-canton/select-canton";
+
+- imports: [FormsModule],
++ imports: [FormsModule, SelectCanton],
 ```
 
 Now remove all the code we have in `app.html` and replace it with:
@@ -637,10 +649,10 @@ UPDATE src/index.html (493 bytes)
 UPDATE src/styles.css (181 bytes)
 ```
 
-The new `select-canton.ts` file needs to inject the `CantonService` and it needs to have an @output declaration so that the result of the selection can be passed back to the parent component. We also need to impoort some stuff for Angular Material to do it's magic. It ends up looking like this:
+The new `select-canton.ts` file needs to inject the `CantonService` and it needs to have an @output declaration so that the result of the selection can be passed back to the parent component. We also need to import some stuff for Angular Material to do it's magic. It ends up looking like this:
 
 ```typescript
-import { Component, inject } from '@angular/core';
+import { Component, effect, EventEmitter, inject, Output, signal } from '@angular/core';
 import { CantonService } from '../canton-service';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -662,17 +674,27 @@ import { FormsModule } from '@angular/forms';
 })
 export class SelectCanton {
   cantonService = inject(CantonService);
+  selectedCantonCode = signal<string>('');
+  @Output() cantonChange = new EventEmitter<string>();
+  constructor() {
+    effect(() => {
+      const code = this.selectedCantonCode();
+      if (code) {
+        this.cantonChange.emit(code);
+      }
+    });
+  }
+
 }
 ```
 
-
-The code for the dropdown looks like this. Add it to select-canton.html:
+The code for the dropdown looks like this. Add it to `select-canton.html`:
 
 ```html
       <mat-form-field class="canton-select">
         <mat-label>Choose a Canton:</mat-label>
         <mat-select (selectionChange)="onSelectionChange($event.value)">
-          @for (canton of cantons(); track canton.code) {
+          @for (canton of cantonsService.cantons(); track canton.code) {
             <mat-option [value]="canton.code">
               <img [src]="canton.flag" class="flag-icon" alt="{{ canton.name }} flag">
               {{ canton.name }}
@@ -704,6 +726,13 @@ The parent component needs to respond to the change of the canton. We add this c
   onCantonChanged(cantonCode: string) {
     this.selectedCantonCode.set(cantonCode);
   }
+```
+
+We need signal imported again:
+
+```diff
+- import { Component, inject } from '@angular/core' };
++ import { Component, inject, signal } from '@angular/core' };
 ```
 
 We can verify this is working by changing the code on the `app.html` page to:
