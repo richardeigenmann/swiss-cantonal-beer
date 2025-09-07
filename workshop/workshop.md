@@ -778,6 +778,7 @@ We want to pass the selected Canton to the new component.
 Add an `input` Signal to the `beer-list.ts`
 
 ```diff
+- import { Component } from '@angular/core';
 + import { Component, computed, inject, input } from '@angular/core';
 
 + selectedCanton = input<string | undefined>();
@@ -786,7 +787,7 @@ Add an `input` Signal to the `beer-list.ts`
 Pass the cantonCode to the child component in `app.ts`:
 
 ```diff
-- <app-beer-list [selectedCanton]="selectedCantonCode()"></app-beer-list>
+- <app-beer-list></app-beer-list>
 + <app-beer-list [selectedCanton]="selectedCantonCode()"></app-beer-list>
 ```
 
@@ -953,7 +954,7 @@ export class BeerList {
 }
 ```
 
-And now we can do the `@for`over our beers. Note that we have some extra logic with an `@if` to test if we have any beers to list and can show an alternative text if not.
+And now we can do the `@for`over our beers. Note that we have some extra logic with an `@if` to test if we have any beers to list and can show an alternative text if not. `beer-list.html`:
 
 ```html
 @if ( selectedCanton !== null && selectedCanton !== undefined ) {
@@ -1040,13 +1041,13 @@ To clean things up, remove the `{{selectedCantonCode()}}` from the `app.html`. T
 
 ## Let's get the data from a REST URL
 
-We can argue that the list of Swiss Cantons is pretty static and won't change on us (at least less frequently than we will have to update our app and re-release it) so hard coding that as an array in our App is OK. But the beers are likely to change quickly so we would probably want this to come from a database. In the front end we are just concerned that we can retrieve a JSON from a URL. So let's implement that.
+We can argue that the list of Swiss Cantons is pretty static and won't change on us (at least less frequently than we will have to update our app and re-release it). Therefore hard coding that as an array in our App is OK. But the beers are likely to change quickly so we would probably want this to come from a database. In the frontend we are just concerned that we can retrieve a JSON from a URL. So let's implement that.
 
 I have put the beer list as a JSON onto this URL:
 
 <https://raw.githubusercontent.com/richardeigenmann/swiss-cantonal-beer/refs/heads/main/workshop/beerlist.json>
 
-Now change the `beer-list.ts` as follows:
+Now change the `beer-service.ts` as follows:
 
 ```typescript
 import { HttpClient } from '@angular/common/http';
@@ -1136,7 +1137,7 @@ Add the component to `app.html`:
 ```diff
 <app-select-canton (cantonChange)="onCantonChanged($event)"></app-select-canton>
 <app-beer-list [selectedCanton]="selectedCantonCode()"></app-beer-list>
-+<app-cookie-banner></app-cookie-banner>
++ <app-cookie-banner></app-cookie-banner>
 ```
 
 Import it to `app.ts`:
@@ -1383,7 +1384,12 @@ We can quickly serve up the page with the Node http-server:
 ```bash
 npm install http-server
 cd dist/beer-app/browser/
-/home/richi/beer-app/node_modules/http-server/bin/http-server -p 4201
+
+# on Linux
+../../../node_modules/http-server/bin/http-server -p 4201
+
+# on Windows
+node ../../../node_modules/http-server/bin/http-server -p 4201
 ```
 
 Open your browser on <a href="http://localhost:4201/">http://localhost:4201</a>
