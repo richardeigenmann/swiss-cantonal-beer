@@ -1,6 +1,6 @@
 # Workshop to build an Angular App with Signals
 
-Expected duration: 2h if you have a small group ofpeople who want to follow along.
+Expected duration: 2h if you have a small group of people who want to follow along.
 
 ## Prerequisites
 
