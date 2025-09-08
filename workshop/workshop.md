@@ -1,6 +1,6 @@
 # Workshop to build an Angular App with Signals
 
-Expected duration: 1h
+Expected duration: 2h if you have a small group op people who want to follow along.
 
 ## Prerequisites
 
@@ -22,6 +22,8 @@ Now install Angular
 ```bash
 # note: I had to run this as root
 npm install -g @angular/cli
+
+# I am told on Mac you need to install with -g for global or the command line doesn't find the ng command afterwards
 ```
 
 ![Install Angular](InstallAngular.png "Install Angular")
@@ -71,7 +73,7 @@ You can set up the app from a terminal inside VS Code but I would do this on the
 ng new beer-app
 ```
 
-```
+```plain
 # Angular will ask you a number of questions. Some may be different or omitted if you have done this before.
 
  Would you like to enable autocompletion? This will set up your terminal so pressing TAB while typing Angular CLI commands will show 
@@ -153,6 +155,8 @@ ng serve -o
 
 And we have a running Angular application being served on port localhost:4200 !
 
+Note: A test person on Windows had to go to the system settings and enable "Executing scripts" as it was disabled on his ageing laptop.
+
 ![Running Angular Application](RunningAngularApp.png "Running Angular Application")
 
 # The structure of the code
@@ -174,7 +178,7 @@ Let's open up `app.html`, delete all the code in it and replace it with
 Did you notice the WARNING in the VS Code Terminal window? `ng serve` constantly recompiles the code and any errors it encounters are shown in the terminal. To fix this error let's remove the `RouterOutlet` from the `app.ts` file. The Router is super useful for making your pages respond to the `/ThingYouWantToDo` part of your URL but we won't get to that in this tutorial.
 
 ```diff
-# in app.ts
+// in app.ts
 - import { RouterOutlet } from '@angular/router';
 - imports: [RouterOutlet],
 + imports: [],
