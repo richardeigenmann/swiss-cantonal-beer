@@ -1,0 +1,11 @@
+<mat-form-field class="canton-select">
+  <mat-label>Choose a Canton:</mat-label>
+  <mat-select [(ngModel)]="selectedCantonCode">
+    @for (canton of cantonService.cantons(); track canton.code) {
+      <mat-option [value]="canton.code">
+        <img [src]="canton.flag" class="flag-icon" alt="{{ canton.name }} flag">
+        {{ canton.name }}
+      </mat-option>
+    }
+  </mat-select>
+</mat-form-field>

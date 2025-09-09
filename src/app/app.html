@@ -1,37 +1,7 @@
+<app-select-canton (cantonChange)="onCantonChanged($event)"></app-select-canton>
+<app-beer-list [selectedCanton]="selectedCantonCode()"></app-beer-list>
 <app-cookie-banner></app-cookie-banner>
+<app-footer></app-footer>
 
-<main class="main">
-  <div class="content">
-    <div class="left-side">
-
-      <mat-form-field class="canton-select">
-        <mat-label>Choose a Canton:</mat-label>
-        <mat-select (selectionChange)="onSelectionChange($event.value)">
-          @for (canton of cantons(); track canton.code) {
-            <mat-option [value]="canton.code">
-              <img [src]="canton.flag" class="flag-icon" alt="{{ canton.name }} flag">
-              {{ canton.name }}
-            </mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
-    </div>
-
-    <div class="right-side">
-      @if ( selectedCanton !== null ) {
-
-        <app-beer-list [selectedCanton]="selectedCanton"></app-beer-list>
-      }
-
-    </div>
-  </div>
-  <router-outlet />
-</main>
-
-<footer>
-  <p>&copy; 2025 Richard Eigenmann. All rights reserved.<br>
-  Source Code: <a href="https://github.com/richardeigenmann/swiss-cantonal-beer">https://github.com/richardeigenmann/swiss-cantonal-beer</a>
-  </p>
-</footer>
 
 

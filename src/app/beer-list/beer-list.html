@@ -1,6 +1,6 @@
 @if ( selectedCanton !== null && selectedCanton !== undefined ) {
   <div class="beer-list-container">
-    <h1 class="canton-title"><img class="flag" src="{{ selectedCanton.flag }}" alt="{{selectedCanton.name}}"> Beers from {{ selectedCanton.name }}</h1>
+    <!-- <h1 class="canton-title"><img class="flag" src="{{ selectedCanton.flag }}" alt="{{selectedCanton.name}}"> Beers from {{ selectedCanton.name }}</h1>-->
     @if (beers(); as beersList) {
       @if (beersList.length > 0) {
           @for (beer of beersList; track beer.name) {

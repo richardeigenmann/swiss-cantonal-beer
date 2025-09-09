@@ -1,0 +1,10 @@
+.canton-select {
+  width: 30ch;
+}
+
+.flag-icon {
+  width: 24px; /* Adjust the width as needed */
+  height: auto;
+  margin-right: 8px; /* Adds some spacing between the flag and the text */
+  vertical-align: middle;
+}

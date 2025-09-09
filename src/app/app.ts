@@ -1,25 +1,19 @@
 import { Component, inject, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import { MatSelectModule } from '@angular/material/select';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { CantonService, Canton } from './canton-service';
+import { SelectCanton } from "./select-canton/select-canton";
+import { CantonService } from './canton-service';
 import { FormsModule } from '@angular/forms';
 import { BeerList } from "./beer-list/beer-list";
 import { CookieBanner } from './cookie-banner/cookie-banner';
+import { Footer } from "./footer/footer";
 
 @Component({
   selector: 'app-root',
   imports: [
-    RouterOutlet,
-    MatFormFieldModule,
-    MatSelectModule,
-    MatIconModule,
-    MatInputModule,
     FormsModule,
+    SelectCanton,
     BeerList,
-    CookieBanner
+    CookieBanner,
+    Footer
 ],
   templateUrl: './app.html',
   styleUrl: './app.css',
@@ -32,10 +26,9 @@ export class App {
   private cantonService = inject(CantonService);
   cantons = this.cantonService.cantons;
 
-  selectedCanton: Canton | null | undefined = null;;
-
-  onSelectionChange(selectedCanton: string) {
-    this.selectedCanton = this.cantonService.getCantonByCode(selectedCanton);
+  selectedCantonCode = signal<string>('');
+  onCantonChanged(cantonCode: string) {
+    this.selectedCantonCode.set(cantonCode);
   }
 
 }

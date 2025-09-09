@@ -1,11 +1,10 @@
-/* You can add global styles to this file, and also import other style files */
-
 html, body { height: 100%; }
+
 body {
   margin: 0;
   padding: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
-  background-image: url('assets/SwissBeerBackground.png');
+  background-image: url('https://github.com/richardeigenmann/swiss-cantonal-beer/blob/main/src/assets/SwissBeerBackground.png?raw=true');
   background-size: cover; /* Optional: ensures the image covers the entire background */
   background-position: center; /* Optional: centers the image */
   background-repeat: no-repeat; /* Optional: prevents the image from repeating */
