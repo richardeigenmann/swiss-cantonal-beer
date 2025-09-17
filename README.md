@@ -7,7 +7,7 @@ See the page live here:
 
 <https://richardeigenmann.github.io/swiss-cantonal-beer/>
 
-I am turning this project into a workshop tutorial:
+I have turned this project into a build, break, fix and refactor workshop tutorial:
 
 <https://github.com/richardeigenmann/swiss-cantonal-beer/blob/main/workshop/workshop.md>
 

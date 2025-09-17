@@ -20,13 +20,19 @@ richi@localhost:~> npm -v
 Now install Angular
 
 ```bash
-# note: I had to run this as root
+# this installs angular globally (-g)
 npm install -g @angular/cli
+
+# note: I had to run this as root on my machine i.e. 
+sudo npm install -g @angular/cli
 
 # I am told on Mac you need to install with -g for global or the command line doesn't find the ng command afterwards
 ```
 
 ![Install Angular](InstallAngular.png "Install Angular")
+
+If it worked properly you can now use the `ng` command. 
+To check ask it for the installed version:
 
 ```bash{3}
 # check the version of Angular that is installed:
@@ -139,6 +145,11 @@ hint: Disable this message with "git config set advice.defaultBranchName false"
     Successfully initialized git.
 ```
 
+Note: since we are going to use Signals we could go for a
+"zoneless" Angular application as `zone.js` is being phased
+out as a change detection mechanism. I've left it in here as
+it's the default choice.
+
 Let's open the project with VS Code. File > Open Folder > beer-app > Open > Yes, I trust the authors > Do you want to install the recommended 'Angular Language Service' extgenstion > Install > Trust Publisher and Install.
 
 Next let's serve the new app locally.
@@ -163,7 +174,11 @@ Note: A test person on Windows had to go to the system settings and enable "Exec
 
 The main page is the `src/index.html` page. This has a tag `<app-root></app-root>` in it's `<body>` tag. This is replaced by the angular app.
 
-The Angular app comes from the `src/app` files. Most importantly, the `app.ts` file is the TypeScript code for the `<app-root></app-root>` tag. In Angular-speak this is a Component as indicated with the `@Component`decorator. The selector `app-root` lets Angular find this Component and substitute it in place of the `<app-root></app-root>` tag on the index.html page. What actually is rendered comes from the `templateUrl` directive which points to the file `app.html`.
+The Angular app comes from the `src/app` files. Most importantly, the `app.ts` file is the
+TypeScript code for the `<app-root></app-root>` tag. In Angular-speak this is a Component
+as indicated with the `@Component`decorator. The selector `app-root` lets Angular find this
+component and substitute it in place of the `<app-root></app-root>` tag on the index.html page.
+What actually is rendered comes from the `templateUrl` directive which points to the file `app.html`.
 
 # A List of Swiss Cantons
 
@@ -198,7 +213,8 @@ export interface Canton {
 }
 ```
 
-Paste the interface definition into the file `app.ts` between the `import` and `@Component` on line 4. This is arguably not the best place to put it but we will rearrange that later when we get to services.
+Paste the interface definition into the file `app.ts` between the `import` and `@Component` on line 4.
+This is arguably not the best place to put it but we will rearrange that later when we get to services.
 
 Here is an Array of Swiss Cantons. Replace line 17 with the array.
 
@@ -233,7 +249,7 @@ Here is an Array of Swiss Cantons. Replace line 17 with the array.
   ];
 ```
 
-We may need to tell Angular that this is a standalone component (which is the modern way to do Angular; modules still work fine for the time beeing):
+Probably not needed: We may need to tell Angular that this is a standalone component (which is the modern way to do Angular; modules still work fine for the time beeing):
 
 ```diff
 @Component({
@@ -251,15 +267,18 @@ Now head back to the `app.html` file and add the following code underneath the `
 
 ```html{2}
 <table>
-@for (canton of cantons; track canton.code) {
+  @for (canton of cantons; track canton.code) {
     <tr>
       <td><img src="{{canton.flag}}"></td>
       <td>{{canton.code}}</td>
       <td>{{canton.name}}</td>
     </tr>
-}
+  }
 </table>
 ```
+
+Note: `@for` is the new syntax for repeating things. In the past
+`*ngFor` was used.
 
 ![A list of cantons](AListOfCantons.png "A list of cantons")
 
@@ -355,6 +374,14 @@ But nothing happens when we click on the Add Jura button! If we click on the "Ru
 Of course this is because we are adding the canton of Jura to the `cantons`  array and not the `filteredCantons` array. We could fix that by calling the `filter()` function from the `addJura` function. But then we have to remember all the places we are doing this. Angular offers a better solution: Signals. A Signal wraps a piece of data with a change detection mechanism which informs dependant pieces of data to refresh and recalculate themselves (think Excel formulas or database views).
 
 ## Converting to Signals
+
+Signals are data structures that have strong change detection built into them.
+
+`signal(initialValue)`: For writable state.
+
+`computed(() => ...)`: For derived, cached, read-only state.
+
+`effect(() => ...)`: For side effects (like logging or updating the DOM outside Angular).
 
 Let's make our language booleans a signal. In `app.ts`:
 
@@ -453,7 +480,9 @@ CREATE src/app/canton-service.spec.ts (357 bytes)
 CREATE src/app/canton-service.ts (117 bytes)
 ```
 
-If you check the `cantonService.ts` file you will notice the `@Injectable` decorator. This marks this class as one that can be injected into other classes when it is needed.
+If you check the `cantonService.ts` file you will notice the `@Injectable` decorator.
+This marks this class as one that can be injected into other classes when it is needed.
+(this is the modern way; it was changed if you are familiar with the old way)
 
 From our App class we now want to remove the `cantons`and `filteredCantons` signals and instead add them to the `CantonService` class. Also move the language signals. And the Canton interface.
 
@@ -583,6 +612,9 @@ export class App {
 }
 ```
 
+`cantonService = inject(CantonService);` is the modern, function-based way to get the service
+injected into the component. It replaces the older constructor based Dpendency Injection.
+
 We also have to fix up `App.html` to specify that the boolean signals now come from the injected `cantonService` Service.
 
 ```html
@@ -623,6 +655,16 @@ Now remove all the code we have in `app.html` and replace it with:
 
 ```html
 <app-select-canton></app-select-canton>
+```
+
+And let's add some css to position the selector in the middle of the screen. Add this to `app.css`:
+
+```css
+app-select-canton {
+  display: block;
+  width: 40ch;
+  margin: 20px auto 0 auto;
+}
 ```
 
 Our browser window should look like this:
@@ -712,7 +754,7 @@ To style the dropdown menu add this CSS to the `select-canton.css` file.
 
 ```css
 .canton-select {
-  width: 30ch;
+  width: 40ch;
 }
 
 .flag-icon {
