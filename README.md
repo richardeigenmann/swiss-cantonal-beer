@@ -17,6 +17,14 @@ While coding this app I discovered a much more comprehensive and serious website
 
 ## The interesting parts of the application
 
+### Components passing data around
+
+The final application has the main app page interacting with 2 components. First 
+we have the dropdown that selects the Canton. This is passed back to the app.
+The app component passes this down to the beer-list component which filters the
+appropriate beers for the canton. The whole reactive thing is at the core of
+Angular.
+
 ### Background image
 
 The background image that was created by Google Gemini is attached to the main `styles.css` file. Since it makes reading the `beer-list` component difficult, the `beer-list.css` has a semi opaque background color of `background-color: rgba(255, 255, 255, 0.7);`
@@ -35,11 +43,14 @@ handle change detection is the underlying data and keep all views refreshed.
 
 ### The source of the beers
 
-I asked Gemini to pull togethe a list of cantons and the beers that are produced there.
-It did a reasonably good job.
+I asked Gemini to pull together a list of cantons and the beers that are produced there. It did a reasonably good job.
 
 Again I wrapped the data into an Angular Signal which is available for Dependency Injection.
 Here the `beer-list.ts` components wants to work with this data.
+
+As the workshop points out the actual JSON with the beers should come from
+a dynamic source like a Rest interface to a database. I simulated this by
+pulling a raw JSON from this GitHub repo, pretending it to be a live service. 
 
 ### Selecting a canton
 
@@ -48,14 +59,14 @@ support cantonal flags in the selection I opted for the Angular-Material `mat-fo
 and 'mat-select' tools.
 
 When the user makes a selection in the dropdown the
-`(selectionChange)="onSelectionChange($event.value)` function is called. Inside the `app.ts`
+`(selectionChange)="onSelectionChange($event.value)"` function is called. Inside the `app.ts`
 code this updates the `selectedCanton` variable. Since this is bound to the `beer-list.ts`
 component the Angular Change Detection system is invoked which makes the beer-list component
 respond to the changed canton.
 
 ### Beer
 
-Drinking Swiss Beers might be the most interesting thing here.
+The above being said, drinking Swiss Beers might be the most interesting thing here.
 
 ## Development server
 
@@ -63,55 +74,10 @@ To start a local development server, run:
 
 ```bash
 ng serve
+ng serve -o
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files. The `-o` option tells the OS to open the browser for you.
 
 ## Publish to Github
 
@@ -120,12 +86,26 @@ ng build --configuration production --base-href "https://richardeigenmann.github
 ngh --dir dist/swiss-cantonal-beer/browser
 ```
 
+## What I glossed over
+
+* Authentication: A real application might have to deal with user authorisation
+and priviledge management vs. the back end
+* Read only: This app doesn't have any sort of maintenance function and indeed
+doesn't have a backend that can handle updates.
+* Large Data considerations: A real database might have a large number of beers
+and pulling all data to the browser and filtering there might have a memory and
+performance penalty. One might have to consider doing the filtering at the server
+side. But that has the trade-off of server costs.
+* Backend: There is none here (well the GitHub static resource serving is technically one but I don't think this counts)
+* Testing: I didn't bother with component tests or End-2-End tests
+* Security: Is not really important with this demo application
+
 ## Acknowledgements
 
 I used Gemini to help me writing this app. It also created the Swiss Flag beer glass image.
 
-The canton flags are coming from Wikipedia.
+The canton flags come from Wikipedia.
 
 The images of the beers are linked to the original websites and were found with a quick google.
 An obvious to-do for this app is to invest in primary research and taste each beer and take
-a personal photo of each beer!
+a personal photo of each beer! (And **not** of the drinker after a heavy night of "field research"...)
