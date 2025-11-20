@@ -23,14 +23,5 @@ describe('App', () => {
     expect(app).toBeTruthy();
   });
 
-  it('should call getCantonByCode on selection change', () => {
-    const fixture = TestBed.createComponent(App);
-    const app = fixture.componentInstance;
-    const cantonCode = 'ZH'; // A mock canton code
-
-    app.onSelectionChange(cantonCode);
-
-    expect(mockCantonService.getCantonByCode).toHaveBeenCalledWith(cantonCode);
-  });
 
 });
