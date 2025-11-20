@@ -11,7 +11,7 @@ I have turned this project into a build, break, fix and refactor workshop tutori
 
 <https://github.com/richardeigenmann/swiss-cantonal-beer/blob/main/workshop/workshop.md>
 
-## Beer
+## Serious Websites
 
 While coding this app I discovered a much more comprehensive and serious website. Check it out here: <https://ilovebeer.ch/de>
 
@@ -19,7 +19,7 @@ While coding this app I discovered a much more comprehensive and serious website
 
 ### Components passing data around
 
-The final application has the main app page interacting with 2 components. First 
+The final application has the main app page interacting with 2 components. First
 we have the dropdown that selects the Canton. This is passed back to the app.
 The app component passes this down to the beer-list component which filters the
 appropriate beers for the canton. The whole reactive thing is at the core of
@@ -50,7 +50,7 @@ Here the `beer-list.ts` components wants to work with this data.
 
 As the workshop points out the actual JSON with the beers should come from
 a dynamic source like a Rest interface to a database. I simulated this by
-pulling a raw JSON from this GitHub repo, pretending it to be a live service. 
+pulling a raw JSON from this GitHub repo, pretending it to be a live service.
 
 ### Selecting a canton
 
@@ -109,3 +109,12 @@ The canton flags come from Wikipedia.
 The images of the beers are linked to the original websites and were found with a quick google.
 An obvious to-do for this app is to invest in primary research and taste each beer and take
 a personal photo of each beer! (And **not** of the drinker after a heavy night of "field research"...)
+
+## Updating
+
+```bash
+ng update
+npm outdated
+npm update
+ng test
+```
