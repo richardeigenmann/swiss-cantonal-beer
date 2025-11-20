@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable, Signal, signal } from '@angular/core';
-import { tap } from 'rxjs';
+import { inject, Injectable, Signal, signal } from '@angular/core';
+import { Observable, tap } from 'rxjs';
 
 export interface Beer {
   name: string;
@@ -21,7 +21,9 @@ export class BeerService {
   // Expose the signal as read-only for use in components
   readonly cantonBeers: Signal<CantonBeerMap> = this._cantonBeers.asReadonly();
 
-  constructor(private http: HttpClient) {
+  private http = inject(HttpClient);
+
+  constructor() {
     this.loadBeers();
   }
 
@@ -31,7 +33,7 @@ export class BeerService {
    */
   loadBeers(): void {
     console.log('Fetching beer data from URL...');
-    this.http.get<CantonBeerMap>(this.BEER_DATA_URL)
+    (this.http.get(this.BEER_DATA_URL) as Observable<CantonBeerMap>)
       .pipe(
         tap(data => {
           console.log('Beer data loaded successfully.');

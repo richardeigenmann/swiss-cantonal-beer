@@ -1,6 +1,5 @@
 import { Component, computed, inject, input } from '@angular/core';
 import { BeerService } from '../beer-service';
-import { Canton } from '../canton-service';
 
 @Component({
   selector: 'app-beer-list',
